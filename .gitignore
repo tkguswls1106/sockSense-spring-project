@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+## 내가 chatGPT api key 유출을 우려하여 따로 파일로 빼두고 gitignore에 추가해둠.
+**/application-chatgpt.properties
