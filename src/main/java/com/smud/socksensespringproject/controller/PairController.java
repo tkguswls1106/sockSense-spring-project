@@ -22,8 +22,8 @@ public class PairController {
 
     @ApiOperation(value = "양말 짝 판별", notes = "두 양말의 짝이 올바른지 판별해줍니다.")
     @PostMapping("/pair")
-    public PairResponseDto postTwoSocks(@RequestPart(value="imageFiles", required = false) List<MultipartFile> imageFiles) throws IOException {  // 양쪽 양말 이미지 2장 전송하면, 양말 짝이 올바른지 반환
-        PairResponseDto pairResponseDto = pairService.postTwoSocks(imageFiles);
+    public PairResponseDto compareSocks(@RequestPart(value="imageFiles", required = false) List<MultipartFile> imageFiles) throws IOException {  // 양쪽 양말 이미지 2장 전송하면, 양말 짝이 올바른지 반환
+        PairResponseDto pairResponseDto = pairService.compareSocks(imageFiles);
         return pairResponseDto;
     }
 

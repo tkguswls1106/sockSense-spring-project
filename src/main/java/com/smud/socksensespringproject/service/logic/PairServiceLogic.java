@@ -21,7 +21,7 @@ public class PairServiceLogic implements PairService {
 
     @Transactional
     @Override
-    public PairResponseDto postTwoSocks(List<MultipartFile> imageFiles) {  // 양쪽 양말 이미지 2장 전송하면, 양말 짝이 올바른지 반환 기능.
+    public PairResponseDto compareSocks(List<MultipartFile> imageFiles) {  // 양쪽 양말 이미지 2장 전송하면, 양말 짝이 올바른지 반환 기능.
 
         if (imageFiles.size() != 2) {
             throw new RuntimeException("에러 - 받은 이미지가 2장이 아닙니다.");
