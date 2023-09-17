@@ -23,7 +23,7 @@ public class StylingController {
 
     @ApiOperation(value = "양말에 대한 코디 추천", notes = "양말에 어울리는 상의,하의,신발 세트의 코디 2가지를 추천해줍니다.")
     @PostMapping("/styling")
-    public List<StylingResponseDto> recommendStyling(@RequestPart(value="imageFile", required = false) MultipartFile imageFile, @RequestBody StylingRequestDto stylingRequestDto) throws IOException {  // 한쪽 양말 이미지 1장과 성별을 전송하면, 코디를 2가지 추천
+    public List<StylingResponseDto> recommendStyling(@RequestPart(value="imageFile") MultipartFile imageFile, @RequestBody StylingRequestDto stylingRequestDto) throws IOException {  // 한쪽 양말 이미지 1장과 성별을 전송하면, 코디를 2가지 추천
         List<StylingResponseDto> stylingResponseDtos = stylingService.recommendStyling(imageFile, stylingRequestDto);
         return stylingResponseDtos;
     }
