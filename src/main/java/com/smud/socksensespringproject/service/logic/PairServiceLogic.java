@@ -39,17 +39,16 @@ public class PairServiceLogic implements PairService {
 
             // 여기는 컴퓨터 비전 파트
             Double similarity = ImageComparison.getSimilarity(image1, image2);
-            //// Double similarity = 40.0;
+            //// 유사도 임시 출력
+            System.out.println(similarity);  ////
 
-            if (50 < similarity && similarity <= 100) {  // 유사 O
+            if (0.9 < similarity && similarity <= 1.0) {  // 유사 O
                 return new PairResponseDto(1);
             }
-            else if (0 <= similarity && similarity <= 50) {  // 유사 X
+            else {  // 유사 X
                 return new PairResponseDto(0);
             }
-            else {  // 유사도 판정 에러
-                throw new RuntimeException("에러 - 유사도의 범위가 0~100이 아닙니다");
-            }
+            //// 근데 여기에 대부분 색깔 비교하는것도 넣어야할듯. 검은양말 흰양말 구분 못함.
         } catch (IOException e) {
             throw new RuntimeException("에러 - 이미지 읽기 실패");
         }

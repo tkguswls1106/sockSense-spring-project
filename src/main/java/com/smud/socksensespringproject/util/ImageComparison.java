@@ -1,23 +1,25 @@
 package com.smud.socksensespringproject.util;
 
 import lombok.NoArgsConstructor;
-import org.opencv.core.*;
-import org.opencv.highgui.HighGui;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-
-import javax.imageio.ImageIO;
+import org.bytedeco.javacpp.FloatPointer;
+import org.bytedeco.javacpp.IntPointer;
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.opencv.global.opencv_core;
+import org.bytedeco.opencv.global.opencv_imgproc;
+import org.bytedeco.opencv.opencv_core.*;
+import org.bytedeco.javacv.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
+import org.bytedeco.javacv.Java2DFrameConverter;
+import org.bytedeco.opencv.opencv_core.Mat;
 
 @NoArgsConstructor
 public class ImageComparison {
 
-    static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
+    static {
+        Loader.load(opencv_core.class);
+    }
 
     public static Double getSimilarity(BufferedImage image1, BufferedImage image2) {
 
@@ -33,8 +35,7 @@ public class ImageComparison {
             Double similarity = compareImages(image1, image2);
 
             return similarity;
-        }
-        else {
+        } else {
             throw new RuntimeException("에러 - 이미지를 불러오는중 오류가 발생했습니다.");
         }
     }
@@ -58,28 +59,43 @@ public class ImageComparison {
         // 이미지를 그레이스케일로 변환
         Mat grayImage1 = new Mat();
         Mat grayImage2 = new Mat();
-        Imgproc.cvtColor(matImage1, grayImage1, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.cvtColor(matImage2, grayImage2, Imgproc.COLOR_BGR2GRAY);
+        opencv_imgproc.cvtColor(matImage1, grayImage1, opencv_imgproc.COLOR_BGR2GRAY);
+        opencv_imgproc.cvtColor(matImage2, grayImage2, opencv_imgproc.COLOR_BGR2GRAY);
 
         // 히스토그램 계산을 위한 범위 설정 (0부터 256까지의 범위)
-        MatOfFloat histRange = new MatOfFloat(0, 256);
-
-        // 히스토그램 계산
         Mat hist1 = new Mat();
         Mat hist2 = new Mat();
-        Imgproc.calcHist(Arrays.asList(grayImage1), new MatOfInt(0), new Mat(), hist1, new MatOfInt(256), histRange);
-        Imgproc.calcHist(Arrays.asList(grayImage2), new MatOfInt(0), new Mat(), hist2, new MatOfInt(256), histRange);
+        calcHist(grayImage1, hist1);
+        calcHist(grayImage2, hist2);
 
         // 히스토그램 비교
-        return Imgproc.compareHist(hist1, hist2, Imgproc.HISTCMP_CORREL);
+        return opencv_imgproc.compareHist(hist1, hist2, opencv_imgproc.HISTCMP_CORREL);
     }
 
     // BufferedImage를 Mat으로 변환
     private static Mat bufferedImageToMat(BufferedImage bufferedImage) {
-        Mat mat = new Mat(bufferedImage.getHeight(), bufferedImage.getWidth(), CvType.CV_8UC3);
-        byte[] data = ((DataBufferByte) bufferedImage.getRaster().getDataBuffer()).getData();
-        mat.put(0, 0, data);
+        Java2DFrameConverter converter = new Java2DFrameConverter();
+        Frame frame = converter.getFrame(bufferedImage);
+        OpenCVFrameConverter.ToMat matConverter = new OpenCVFrameConverter.ToMat();
 
-        return mat;
+        return matConverter.convert(frame);
+    }
+
+    // 히스토그램 계산
+    private static void calcHist(Mat image, Mat hist) {
+        MatVector images = new MatVector(1);
+        images.put(0, image);
+
+        IntPointer channels = new IntPointer(1);
+        channels.put(0, 0);
+
+        IntPointer histSize = new IntPointer(1);
+        histSize.put(0, 256);
+
+        FloatPointer ranges = new FloatPointer(2);
+        ranges.put(0, 0);
+        ranges.put(1, 256);
+
+        opencv_imgproc.calcHist(images, channels, new Mat(), hist, histSize, ranges);
     }
 }
