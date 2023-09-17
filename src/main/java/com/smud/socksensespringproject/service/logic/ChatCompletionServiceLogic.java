@@ -6,6 +6,7 @@ import com.smud.socksensespringproject.externalapi.ChatCompletionClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 
@@ -22,6 +23,8 @@ public class ChatCompletionServiceLogic {
     @Value("${chatgptapikey}")
     private String apiKey;
 
+
+    @Transactional
     public String chatCompletions(final String question) {
 
         Message message = Message.builder()
