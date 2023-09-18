@@ -3,7 +3,6 @@ package com.smud.socksensespringproject.controller;
 import com.smud.socksensespringproject.dto.styling.StylingRequestDto;
 import com.smud.socksensespringproject.dto.styling.StylingResponseDto;
 import com.smud.socksensespringproject.service.StylingService;
-import com.smud.socksensespringproject.service.logic.ChatCompletionServiceLogic;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import java.util.List;
 public class StylingController {
 
     private final StylingService stylingService;
-    private final ChatCompletionServiceLogic chatCompletionServiceLogic;
 
 
     @ApiOperation(value = "양말에 대한 코디 추천", notes = "양말에 어울리는 상의,하의,신발 세트의 코디 2가지를 추천해줍니다.")

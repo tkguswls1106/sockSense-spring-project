@@ -22,7 +22,7 @@ public class SwaggerConfig {
                 .apiInfo(apiInfo())
                 .useDefaultResponseMessages(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.shj.socksensespringproject.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.smud.socksensespringproject.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }

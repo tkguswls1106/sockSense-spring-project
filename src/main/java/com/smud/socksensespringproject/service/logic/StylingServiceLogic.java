@@ -8,7 +8,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor  // 이걸로 private final 되어있는걸 자동으로 생성자 만들어줘서 @Autowired와 this 없이 의존관계 DI 주입시켜줌.
@@ -21,14 +24,59 @@ public class StylingServiceLogic implements StylingService {
     @Override
     public List<StylingResponseDto> recommendStyling(MultipartFile imageFile, StylingRequestDto stylingRequestDto) {
 
+        //// 남성 여성으로 입력안될시 다시
+
         //// 이미지 색상 추출하고
-        //// "내 성별은 ??이야. 대부분이 ?? 색상인 양말이 있어. 이와 매치할만한 코디 상의 1벌,하의 1벌,신발 1켤레씩을 두 차례로 나누어 추천해줘. 대답형식은 '코디1-상의: %s, 하의: %s, 신발: %s\n코디2-상의: %s, 하의: %s, 신발: %s' 이렇게 대답해."
-        String question = "질문할 양식 생성";  ////
-        String answer = chatCompletionServiceLogic.chatCompletions(question);
-        //// 여기다가 answer 텍스트 전처리하고
+        String sockColor = "초록";  // 양말 색상
 
+        String question =
+                "내 성별은 "
+                + stylingRequestDto.getGender()
+                + "이야. 대부분이 "
+                + sockColor
+                + " 색상인 양말이 있어. 이와 매치할만한 코디 상의 1벌,하의 1벌,신발 1켤레씩을 두 차례로 나누어 추천해줘. 대답형식은 '코디1-상의: %s, 하의: %s, 신발: %s\n코디2-상의: %s, 하의: %s, 신발: %s\n입니다.' 이렇게 대답해.";
 
-        return null;
+        String answer = chatCompletionServiceLogic.chatCompletions(question);  // chatGPT api로 질문함.
+
+        List<String> topList = extractStringsBetweenPatterns(answer, "상의: ", ", 하의:");
+        List<String> pantsList = extractStringsBetweenPatterns(answer, "하의: ", ", 신발:");
+        List<String> shoesList = extractStringsBetweenPatterns(answer, "신발: ", "\n");
+
+        while(true) {  // chatGPT에게 받은 답변이 코디 문자열 추출에 맞는 형식이 아니어서 인덱스에러가 날 경우, 다시 질문하게함.
+            if (topList.size() == 2 && pantsList.size() == 2 && shoesList.size() == 2) {
+                break;  // 정상적으로 문자열 추출이 되었으니, 무한 루프를 빠져나감.
+            }
+
+            // 정상적으로 문자열 추출이 안되었으니, 다시 질문하여 결과 갱신.
+            answer = chatCompletionServiceLogic.chatCompletions(question);
+            topList = extractStringsBetweenPatterns(answer, "상의: ", ", 하의:");
+            pantsList = extractStringsBetweenPatterns(answer, "하의: ", ", 신발:");
+            shoesList = extractStringsBetweenPatterns(answer, "신발: ", "\n");
+        }
+
+        StylingResponseDto stylingResponseDto1 = new StylingResponseDto(topList.get(0), pantsList.get(0), shoesList.get(0));
+        StylingResponseDto stylingResponseDto2 = new StylingResponseDto(topList.get(1), pantsList.get(1), shoesList.get(1));
+
+        List<StylingResponseDto> stylingResponseDtos = new ArrayList<>();
+        stylingResponseDtos.add(stylingResponseDto1);
+        stylingResponseDtos.add(stylingResponseDto2);
+
+        return stylingResponseDtos;
+    }
+
+    public static List<String> extractStringsBetweenPatterns(String input, String startPattern, String endPattern) {  // 코디 문자열 추출용 메소드
+        List<String> resultList = new ArrayList<>();
+
+        String pattern = startPattern + "(.*?)" + endPattern;  // 정규 표현식 패턴 pattern을 생성.
+        Pattern r = Pattern.compile(pattern);  // 정규 표현식 패턴을 컴파일하여 Pattern 객체 r을 생성.
+        Matcher matcher = r.matcher(input);  // 입력 문자열에 대해 정규 표현식을 적용할 Matcher 객체 matcher를 생성.
+
+        while (matcher.find()) {  // 입력 문자열에서 정규 표현식에 매칭되는 부분을 찾음.
+            String extractedString = matcher.group(1).trim();
+            resultList.add(extractedString);
+        }
+
+        return resultList;
     }
 
 }
