@@ -21,12 +21,14 @@ public class StylingServiceLogic implements StylingService {
     @Override
     public List<StylingResponseDto> recommendStyling(MultipartFile imageFile, StylingRequestDto stylingRequestDto) {
 
+        //// 이미지 색상 추출하고
+        //// "내 성별은 ??이야. 대부분이 ?? 색상인 양말이 있어. 이와 매치할만한 코디 상의 1벌,하의 1벌,신발 1켤레씩을 두 차례로 나누어 추천해줘. 대답형식은 '코디1-상의: %s, 하의: %s, 신발: %s\n코디2-상의: %s, 하의: %s, 신발: %s' 이렇게 대답해."
         String question = "질문할 양식 생성";  ////
         String answer = chatCompletionServiceLogic.chatCompletions(question);
-
         //// 여기다가 answer 텍스트 전처리하고
 
 
         return null;
     }
+
 }
