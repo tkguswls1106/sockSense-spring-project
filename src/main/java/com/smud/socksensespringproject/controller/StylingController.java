@@ -4,8 +4,11 @@ import com.smud.socksensespringproject.dto.styling.StylingRequestDto;
 import com.smud.socksensespringproject.dto.styling.StylingResponseDto;
 import com.smud.socksensespringproject.service.StylingService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,8 +25,12 @@ public class StylingController {
 
 
     @ApiOperation(value = "양말에 대한 코디 추천", notes = "양말에 어울리는 상의,하의,신발 세트의 코디 2가지를 추천해줍니다.")
-    @PostMapping("/styling")
-    public List<StylingResponseDto> recommendStyling(@RequestPart(value="imageFile") MultipartFile imageFile, @RequestBody StylingRequestDto stylingRequestDto) throws IOException {  // 한쪽 양말 이미지 1장과 성별을 전송하면, 코디를 2가지 추천
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "imageFile", value = "양말 한쪽 이미지 1장", dataType = "__file"),
+            @ApiImplicitParam(name = "stylingRequestDto", value = "{\"gender\": \"남성 or 여성\"}")
+    })
+    @PostMapping(value = "/styling",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<StylingResponseDto> recommendStyling(@RequestPart(value="imageFile") MultipartFile imageFile, @RequestPart(value="stylingRequestDto") StylingRequestDto stylingRequestDto) throws IOException {  // 한쪽 양말 이미지 1장과 성별을 전송하면, 코디를 2가지 추천
         List<StylingResponseDto> stylingResponseDtos = stylingService.recommendStyling(imageFile, stylingRequestDto);
         return stylingResponseDtos;
     }

@@ -5,6 +5,7 @@ import com.smud.socksensespringproject.service.PairService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,8 +21,8 @@ public class PairController {
     private final PairService pairService;
 
 
-    @ApiOperation(value = "양말 짝 판별", notes = "두 양말의 짝이 올바른지 판별해줍니다.")
-    @PostMapping("/pair")
+    @ApiOperation(value = "양말 짝 판별", notes = "두 양말의 짝이 올바른지 판별해줍니다.\n양말 한쪽 이미지 2장을 업로드해야합니다.\n참고로 이 api 메소드는 버전상 Swagger 문서에서만 테스트가 불가능합니다.")
+    @PostMapping(value = "/pair", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public PairResponseDto compareSocks(@RequestPart(value="imageFiles") List<MultipartFile> imageFiles) throws IOException {  // 양쪽 양말 이미지 2장 전송하면, 양말 짝이 올바른지 반환
         PairResponseDto pairResponseDto = pairService.compareSocks(imageFiles);
         return pairResponseDto;
