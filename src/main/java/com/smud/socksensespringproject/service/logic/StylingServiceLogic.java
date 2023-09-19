@@ -2,6 +2,7 @@ package com.smud.socksensespringproject.service.logic;
 
 import com.smud.socksensespringproject.dto.styling.StylingRequestDto;
 import com.smud.socksensespringproject.dto.styling.StylingResponseDto;
+import com.smud.socksensespringproject.response.exeption.GenderBadRequestException;
 import com.smud.socksensespringproject.service.StylingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,9 @@ public class StylingServiceLogic implements StylingService {
     @Override
     public List<StylingResponseDto> recommendStyling(MultipartFile imageFile, StylingRequestDto stylingRequestDto) {
 
-        //// 남성 여성으로 입력안될시 다시
+        if (!(stylingRequestDto.getGender().equals("남성") || stylingRequestDto.getGender().equals("여성"))) {  // 성별이 '남성' 또는 '여성'으로 입력안될시 예외 처리.
+            throw new GenderBadRequestException();
+        }
 
         //// 이미지 색상 추출하고
         String sockColor = "초록";  // 양말 색상
