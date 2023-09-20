@@ -1,7 +1,6 @@
 package com.smud.socksensespringproject.controller;
 
 import com.smud.socksensespringproject.dto.styling.StylingRequestDto;
-import com.smud.socksensespringproject.dto.styling.Styling;
 import com.smud.socksensespringproject.dto.styling.StylingResponseDto;
 import com.smud.socksensespringproject.response.ResponseCode;
 import com.smud.socksensespringproject.response.ResponseData;
@@ -26,7 +25,7 @@ public class StylingController {
 
 
     @ApiOperation(value = "양말에 대한 코디 추천", notes = "양말에 어울리는 상의,하의,신발 세트의 코디 2가지를 추천해줍니다.")
-    @ApiResponses({@ApiResponse(code = 200, message = MessageItem.STYLING_SUCCESS, response = Styling.class, responseContainer = "List")})
+    @ApiResponses({@ApiResponse(code = 200, message = MessageItem.STYLING_SUCCESS, response = StylingResponseDto.class, responseContainer = "List")})
     @ApiImplicitParams({
             @ApiImplicitParam(name = "imageFile", value = "양말 한쪽 이미지 1장", dataType = "__file"),
             @ApiImplicitParam(name = "stylingRequestDto", value = "{\"gender\": \"남성 or 여성\"}")
