@@ -1,6 +1,7 @@
 package com.smud.socksensespringproject.service.logic;
 
 import com.smud.socksensespringproject.dto.styling.StylingRequestDto;
+import com.smud.socksensespringproject.dto.styling.Styling;
 import com.smud.socksensespringproject.dto.styling.StylingResponseDto;
 import com.smud.socksensespringproject.response.exeption.GenderBadRequestException;
 import com.smud.socksensespringproject.service.StylingService;
@@ -23,7 +24,7 @@ public class StylingServiceLogic implements StylingService {
 
     @Transactional
     @Override
-    public List<StylingResponseDto> recommendStyling(MultipartFile imageFile, StylingRequestDto stylingRequestDto) {
+    public StylingResponseDto recommendStyling(MultipartFile imageFile, StylingRequestDto stylingRequestDto) {
 
         if (!(stylingRequestDto.getGender().equals("남성") || stylingRequestDto.getGender().equals("여성"))) {  // 성별이 '남성' 또는 '여성'으로 입력안될시 예외 처리.
             throw new GenderBadRequestException();
@@ -57,14 +58,16 @@ public class StylingServiceLogic implements StylingService {
             shoesList = extractStringsBetweenPatterns(answer, "신발: ", "\n");
         }
 
-        StylingResponseDto stylingResponseDto1 = new StylingResponseDto(topList.get(0), pantsList.get(0), shoesList.get(0));
-        StylingResponseDto stylingResponseDto2 = new StylingResponseDto(topList.get(1), pantsList.get(1), shoesList.get(1));
+        Styling styling1 = new Styling(topList.get(0), pantsList.get(0), shoesList.get(0));
+        Styling styling2 = new Styling(topList.get(1), pantsList.get(1), shoesList.get(1));
 
-        List<StylingResponseDto> stylingResponseDtos = new ArrayList<>();
-        stylingResponseDtos.add(stylingResponseDto1);
-        stylingResponseDtos.add(stylingResponseDto2);
+        List<Styling> stylings = new ArrayList<>();
+        stylings.add(styling1);
+        stylings.add(styling2);
 
-        return stylingResponseDtos;
+        StylingResponseDto stylingResponseDto = new StylingResponseDto(sockColor, stylings);
+
+        return stylingResponseDto;
     }
 
     public static List<String> extractStringsBetweenPatterns(String input, String startPattern, String endPattern) {  // 코디 문자열 추출용 메소드

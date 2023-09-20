@@ -4,18 +4,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class StylingResponseDto {
 
-    private String top;  // 상의
-    private String pants;  // 하의
-    private String shoes;  // 신발
+    private String sockColor;  // 양말 색깔
+    private List<Styling> stylings;  // 코디 2가지
 
     @Builder
-    public StylingResponseDto(String top, String pants, String shoes) {
-        this.top = top;
-        this.pants = pants;
-        this.shoes = shoes;
+    public StylingResponseDto(String sockColor, List<Styling> stylings) {
+        this.sockColor = sockColor;
+        this.stylings = stylings;
     }
 }
