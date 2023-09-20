@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:3000"}, allowedHeaders = "*")
+@CrossOrigin(origins = {"https://www.socksense.site", "http://localhost:3000"}, allowedHeaders = "*")
 @Api(tags = {"Styling"})
 @RestController
 @RequiredArgsConstructor  // 이걸로 private final 되어있는걸 자동으로 생성자 만들어줘서 @Autowired와 this 없이 의존관계 DI 주입시켜줌.
