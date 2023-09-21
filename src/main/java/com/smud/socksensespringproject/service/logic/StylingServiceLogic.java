@@ -1,5 +1,7 @@
 package com.smud.socksensespringproject.service.logic;
 
+import com.smud.socksensespringproject.dto.computervision.OneImageRequestDto;
+import com.smud.socksensespringproject.dto.computervision.SockColorResponseDto;
 import com.smud.socksensespringproject.dto.styling.StylingRequestDto;
 import com.smud.socksensespringproject.dto.styling.Styling;
 import com.smud.socksensespringproject.dto.styling.StylingResponseDto;
@@ -20,6 +22,7 @@ import java.util.regex.Pattern;
 public class StylingServiceLogic implements StylingService {
 
     private final ChatCompletionServiceLogic chatCompletionServiceLogic;
+    private final ComputerVisionServiceLogic computerVisionServiceLogic;
 
 
     @Transactional
@@ -30,8 +33,10 @@ public class StylingServiceLogic implements StylingService {
             throw new GenderBadRequestException();
         }
 
-        //// 이미지 색상 추출하고
-        String sockColor = "초록";  // 양말 색상
+        // 여기는 컴퓨터 비전 api 파트 (이미지 색상 추출)
+        OneImageRequestDto oneImageRequestDto = new OneImageRequestDto(imageFile);
+        SockColorResponseDto sockColorResponseDto = computerVisionServiceLogic.sockColor(oneImageRequestDto);
+        String sockColor = sockColorResponseDto.getSockColor();  // 양말 색상 (빨강,주황,노랑,초록,파랑,보라,검정,흰색,회색)
 
         String question =
                 "내 성별은 "
