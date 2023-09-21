@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity handleException(Exception ex) {
-        return ResponseData.toResponseEntity(ResponseCode.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity handleException(Exception ex) {
+//        return ResponseData.toResponseEntity(ResponseCode.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(GenderBadRequestException.class)
     public ResponseEntity handleGenderBadRequestException(GenderBadRequestException ex) {

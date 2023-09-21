@@ -3,6 +3,7 @@ package com.smud.socksensespringproject.service.logic;
 import com.smud.socksensespringproject.dto.computervision.SimilarityResponseDto;
 import com.smud.socksensespringproject.dto.computervision.TwoImagesRequestDto;
 import com.smud.socksensespringproject.dto.pair.PairResponseDto;
+import com.smud.socksensespringproject.response.exeption.ImageCantReadException;
 import com.smud.socksensespringproject.response.exeption.ImagesBadRequestException;
 import com.smud.socksensespringproject.service.PairService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -27,19 +29,25 @@ public class PairServiceLogic implements PairService {
             throw new ImagesBadRequestException();
         }
 
-        // 여기는 컴퓨터 비전 api 파트 (두 이미지 유사도 측정)
-        TwoImagesRequestDto twoImagesRequestDto = new TwoImagesRequestDto(imageFiles.get(0), imageFiles.get(1));
-        SimilarityResponseDto similarityResponseDto = computerVisionServiceLogic.similarity(twoImagesRequestDto);
-        Double similarityScore = similarityResponseDto.getSimilarity();
+        try {
+            byte[] bytes1 = imageFiles.get(0).getBytes();
+            byte[] bytes2 = imageFiles.get(1).getBytes();
+            TwoImagesRequestDto twoImagesRequestDto = new TwoImagesRequestDto(bytes1, bytes2);
+            // 여기는 컴퓨터 비전 api 파트 (두 이미지 유사도 측정)
+            SimilarityResponseDto similarityResponseDto = computerVisionServiceLogic.similarity(twoImagesRequestDto);
+            Double similarityScore = similarityResponseDto.getSimilarity();
 
-        //// 유사도 임시 출력
-        System.out.println(similarityScore);
+            //// 유사도 임시 출력
+            System.out.println(similarityScore);
 
-        if (0.85 < similarityScore && similarityScore <= 1.0) {  // 유사 O
-            return new PairResponseDto(1);
-        }
-        else {  // 유사 X
-            return new PairResponseDto(0);
+            if (0.85 < similarityScore && similarityScore <= 1.0) {  // 유사 O
+                return new PairResponseDto(1);
+            }
+            else {  // 유사 X
+                return new PairResponseDto(0);
+            }
+        } catch (IOException e) {
+            throw new ImageCantReadException();
         }
     }
 
