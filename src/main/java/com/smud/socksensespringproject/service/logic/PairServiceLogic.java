@@ -37,9 +37,6 @@ public class PairServiceLogic implements PairService {
             SimilarityResponseDto similarityResponseDto = computerVisionServiceLogic.similarity(twoImagesRequestDto);
             Double similarityScore = similarityResponseDto.getSimilarity();
 
-            //// 유사도 임시 출력
-            System.out.println(similarityScore);
-
             if (0.85 < similarityScore && similarityScore <= 1.0) {  // 유사 O
                 return new PairResponseDto(1);
             }
