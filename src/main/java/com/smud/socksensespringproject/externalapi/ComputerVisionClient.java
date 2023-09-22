@@ -9,7 +9,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "computervision", url = "http://127.0.0.1:8000/")
+@FeignClient(name = "computervision", url = "https://socksense-e0ec7268c3d8.herokuapp.com/")
 public interface ComputerVisionClient {
 
     @Headers("Content-Type: application/json")
